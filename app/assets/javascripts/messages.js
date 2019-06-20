@@ -5,7 +5,7 @@ $(function(){
     var content = message.content? message.content : ""
     var image = message.image.url? message.image.url : ""
 
-    var html = `<div class="message">
+    var html = `<div class="message" data-id= ${message.id}> 
                   <div class="upper-message">
                     <div class="upper-message__user-name">
                       ${message.user_name}
@@ -49,6 +49,27 @@ $(function(){
       $(".form__submit").prop("disabled", false);
     })
 
-
+    var reloadMessages = function() {
+      last_message_id = "/groupes/:group_id/api/messages"
+      $.ajax({
+        url: "/groupes/:group_id/api/messages",
+        type: "get",
+        dataType: "json",
+        data: {id: last_message_id}
+      })
+      .done(function(messages){
+        var insertHTML = "";
+        messages.each(function(message){
+          var insertHTML = buildMessage(message);
+        });
+        var html = buildMessage(message);
+        $(".messages").append(html);
+      })
+      .fail(function(){
+        console.log("error");
+      });
+    }
   })
+  setInterval(reloadMessages, 5000);
+  $(".messages").animate({scrollTop: $(".messages")[0].scrollHeight}, "fast");
 });
