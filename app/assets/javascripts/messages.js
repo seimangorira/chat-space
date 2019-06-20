@@ -48,28 +48,28 @@ $(function(){
     .always(function(message){
       $(".form__submit").prop("disabled", false);
     })
-
-    var reloadMessages = function() {
-      last_message_id = "/groupes/:group_id/api/messages"
-      $.ajax({
-        url: "/groupes/:group_id/api/messages",
-        type: "get",
-        dataType: "json",
-        data: {id: last_message_id}
-      })
-      .done(function(messages){
-        var insertHTML = "";
-        messages.each(function(message){
-          var insertHTML = buildMessage(message);
-        });
-        var html = buildMessage(message);
-        $(".messages").append(html);
-      })
-      .fail(function(){
-        console.log("error");
-      });
-    }
   })
+  var reloadMessages = function() {
+    last_message_id = "/groups/:id/api/messages"
+    $.ajax({
+      url: "/groups/:id/api/messages",
+      type: "get",
+      dataType: "json",
+      data: {id: last_message_id}
+    })
+    .done(function(messages){
+      var insertHTML = "";
+      messages.foreach(function(message){
+        var insertHTML = buildMessage(message);
+      });
+      var html =  insertHTML;
+      $(".messages").append(html);
+    })
+    .fail(function(){
+      console.log("error");
+    });
+  }
+
   setInterval(reloadMessages, 5000);
   $(".messages").animate({scrollTop: $(".messages")[0].scrollHeight}, "fast");
 });
