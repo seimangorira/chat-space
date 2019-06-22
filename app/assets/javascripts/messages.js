@@ -3,9 +3,9 @@ $(function(){
 
   function buildMessage(message) {
     var content = message.content? message.content : ""
-    var image = message.image.url? message.image.url : ""
+    var image = message.image? message.image : ""
 
-    var html = `<div class="message" data-id= ${message.id}> 
+    var html = `<div class="message" data-messageid= ${message.id}> 
                   <div class="upper-message">
                     <div class="upper-message__user-name">
                       ${message.user_name}
@@ -50,26 +50,28 @@ $(function(){
     })
   })
   var reloadMessages = function() {
-    last_message_id = "/groups/:id/api/messages"
-    $.ajax({
-      url: "/groups/:id/api/messages",
-      type: "get",
-      dataType: "json",
-      data: {id: last_message_id}
-    })
-    .done(function(messages){
-      var insertHTML = "";
-      messages.foreach(function(message){
-        var insertHTML = buildMessage(message);
+    if (location.pathname.match(/\/groups\/\d+\/messages/)) {
+      var last_message_id = $(".message:last").last().data("messageid");
+      var group_id = $(".left-header__title").data("groupid")
+      $.ajax({
+        url: `/groups/${group_id}/api/messages`,
+        type: "GET",
+        dataType: "json",
+        data: {id: last_message_id, group_id: group_id}
+      })
+      .done(function(messages){
+        var insertHTML = "";
+        messages.forEach(function(message){
+          var insertHTML = buildMessage(message);
+          $(".messages").append(insertHTML);
+          $(".messages").animate({scrollTop: $(".messages")[0].scrollHeight}, "fast");
+        });
+      })
+      .fail(function(){
+        console.log("error");
       });
-      var html =  insertHTML;
-      $(".messages").append(html);
-    })
-    .fail(function(){
-      console.log("error");
-    });
-  }
+    }
+  };
 
   setInterval(reloadMessages, 5000);
-  $(".messages").animate({scrollTop: $(".messages")[0].scrollHeight}, "fast");
 });
