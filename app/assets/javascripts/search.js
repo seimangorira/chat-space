@@ -34,28 +34,31 @@ $(document).on('turbolinks:load', function() {
   }
 
   $("#user-search-field").on("keyup", function() {
-    var input = $("#user-search-field").val();
-    $.ajax({
-      type: 'GET',
-      url: '/users',
-      data: { keyword: input },
-      dataType: 'json'
-    })
-
-    .done(function(users) {
-      $("#user-search-result").empty();
-      if (users.length !== 0) {
-        users.forEach(function(user){
-        appendHTML(user);
-      });
-      }
-      else {
+      var input = $("#user-search-field").val();
+      if (input === "") {
+        $("#user-search-result").empty();
         appendErrMsgToHTML("一致するユーザーが見つかりません");
-      }
-    })
-    .fail(function() {
-      alert('ユーザー検索に失敗しました');
-    })
+        return}
+      $.ajax({
+        type: 'GET',
+        url: '/users',
+        data: { keyword: input },
+        dataType: 'json'
+      })
+      .done(function(users) {
+        $("#user-search-result").empty();
+        if (users.length !== 0) {
+          users.forEach(function(user){
+          appendHTML(user);
+        });
+        }
+        else {
+          appendErrMsgToHTML("一致するユーザーが見つかりません");
+        }
+      })
+      .fail(function() {
+        alert('ユーザー検索に失敗しました');
+      })
   });
   $('#user-search-result').on('click', '.user-search-add', function() {
     $(this).parent().remove();
