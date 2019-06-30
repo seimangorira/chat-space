@@ -21,12 +21,12 @@
     .chat-group-form__field--left
       %label.chat-group-form__label{for: "chat_group_チャットメンバー"} チャットメンバー
     .chat-group-form__field--right
-      .chat-group-user.clearfix.js-chat-member
-        = f.hidden_field :user_ids, value: current_user.id, name: 'group[user_ids][]'
-        .chat-group-form__field--right__current
-          = current_user.name
-        #chat-group-users
-          =render partial: "user", collection: @users
+      #chat-group-users
+        .chat-group-user.clearfix.js-chat-member
+          = f.hidden_field :user_ids, value: current_user.id, name: 'group[user_ids][]'
+          .chat-group-form__field--right__current
+            = current_user.name
+            =render partial: "user", collection: @users
 
   .chat-group-form__field.clearfix
     .chat-group-form__field--left
